@@ -29,7 +29,7 @@ class AiListingEnhancement {
 class AiService {
   /// Paste your live deployed Render URL here (e.g. 'https://campuskart-ai.onrender.com')
   /// When null/empty, automatically falls back to local server (localhost / 10.0.2.2).
-  static const String? liveBackendUrl = null;
+  static const String? liveBackendUrl = 'https://campuskart-yf8h.onrender.com';
 
   static String get baseUrl {
     if (liveBackendUrl != null && liveBackendUrl!.trim().isNotEmpty) {
