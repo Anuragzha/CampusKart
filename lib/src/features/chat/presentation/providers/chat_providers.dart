@@ -42,6 +42,6 @@ final totalUnreadCountProvider = Provider.autoDispose<int>((ref) {
     data: (chats) =>
         chats.fold(0, (sum, chat) => sum + chat.unreadCountFor(uid)),
     loading: () => 0,
-    error: (_, __) => 0,
+    error: (e, st) => 0,
   );
 });

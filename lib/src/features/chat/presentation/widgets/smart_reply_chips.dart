@@ -57,7 +57,7 @@ class _SmartReplyChipsState extends State<SmartReplyChips> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _replies.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final reply = _replies[index];
           return ActionChip(

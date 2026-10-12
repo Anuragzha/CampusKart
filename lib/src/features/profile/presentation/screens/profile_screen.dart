@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:campus_kart/src/core/constants/app_colors.dart';
+import 'package:campus_kart/src/core/utils/responsive.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, this.uid});
@@ -16,227 +17,284 @@ class ProfileScreen extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'Profile',
+          'Account',
           style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+            color: Color(0xFF0F172A),
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: AppColors.textPrimary,
-            ),
-            onPressed: () {},
+            icon: const Icon(Icons.settings_outlined, color: Color(0xFF0F172A)),
+            onPressed: () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Settings opened')));
+            },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            // Profile card
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  // Avatar with edit button
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 45,
-                        backgroundColor: AppColors.primarySurface,
-                        child: const Icon(
-                          Icons.person,
-                          size: 45,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                          ),
+      body: ResponsiveContainer(
+        maxWidth: 680,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            children: [
+              // ── Profile Card ──────────────────────────────────────────
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFF1F5F9)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Avatar with edit button
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 46,
+                          backgroundColor: AppColors.primarySurface,
                           child: const Icon(
-                            Icons.edit,
-                            size: 16,
-                            color: Colors.white,
+                            Icons.person_rounded,
+                            size: 48,
+                            color: AppColors.primary,
                           ),
                         ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: const BoxDecoration(
+                              color: AppColors.navy,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.edit_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    const Text(
+                      'Anurag Jha',
+                      style: TextStyle(
+                        color: Color(0xFF0F172A),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Anurag Jha',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'BTech CSE • 3rd Year',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
+                    const SizedBox(height: 4),
+                    const Text(
+                      'BTech CSE • 3rd Year • BUEST',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF6FF),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            Icons.verified_rounded,
+                            color: Color(0xFF2563EB),
+                            size: 14,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'Verified Student ID',
+                            style: TextStyle(
+                              color: Color(0xFF1D4ED8),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEFF6FF),
-                      borderRadius: BorderRadius.circular(20),
+                    const SizedBox(height: 18),
+
+                    // Stats row
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          _buildStatItem('8', 'Active Ads'),
+                          VerticalDivider(
+                            color: Colors.grey.shade200,
+                            width: 1,
+                            thickness: 1,
+                          ),
+                          _buildStatItem('12', 'Deals Done'),
+                          VerticalDivider(
+                            color: Colors.grey.shade200,
+                            width: 1,
+                            thickness: 1,
+                          ),
+                          _buildStatItem('4.9 ★', 'Rating'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // ── Navigation Menu List ──────────────────────────────────
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: const Color(0xFFF1F5F9)),
+                ),
+                child: Column(
+                  children: [
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.bookmark_outline_rounded,
+                      label: 'My Ads & Listings',
+                      onTap: () => context.go('/my-listings'),
+                    ),
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.local_mall_outlined,
+                      label: 'Purchase History',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Purchase history loaded'),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.favorite_outline_rounded,
+                      label: 'Saved Wishlist',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Wishlist items loaded'),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.security_rounded,
+                      label: 'Campus Safety & Meetup Guide',
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Campus Safety Tips'),
+                            content: const Text(
+                              '• Always meet in well-lit public campus areas (Library, Cafeteria, Department Foyers).\n• Inspect electronic items in person before paying.\n• Use UPI or direct campus handoffs for secure transactions.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text('Got it'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.help_outline_rounded,
+                      label: 'Help & Campus Support',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Support email: support@buest.edu.in',
+                            ),
+                          ),
+                        );
+                      },
+                      isLast: true,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ── Sign Out Button ───────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      context.go('/login');
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFEF4444)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Icon(
-                          Icons.verified_rounded,
-                          color: Color(0xFF3B82F6),
-                          size: 14,
+                          Icons.logout_rounded,
+                          color: Color(0xFFEF4444),
+                          size: 18,
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: 8),
                         Text(
-                          '✓ Verified Student',
+                          'Sign Out',
                           style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
+                            color: Color(0xFFEF4444),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Stats row
-                  IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        _buildStatItem('12', 'Listings'),
-                        VerticalDivider(
-                          color: Colors.grey.shade200,
-                          width: 1,
-                          thickness: 1,
-                        ),
-                        _buildStatItem('5', 'Sold'),
-                        VerticalDivider(
-                          color: Colors.grey.shade200,
-                          width: 1,
-                          thickness: 1,
-                        ),
-                        _buildStatItem('3', 'Reviews'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Menu list
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.list_alt_rounded,
-                    label: 'My Listings',
-                    onTap: () => context.go('/my-listings'),
-                  ),
-                  _buildDivider(),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.shopping_bag_outlined,
-                    label: 'My Orders',
-                    onTap: () {},
-                  ),
-                  _buildDivider(),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.bookmark_outline_rounded,
-                    label: 'Saved Items',
-                    onTap: () {},
-                  ),
-                  _buildDivider(),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.settings_outlined,
-                    label: 'Settings',
-                    onTap: () {},
-                  ),
-                  _buildDivider(),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.help_outline_rounded,
-                    label: 'Help & Support',
-                    onTap: () {},
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Sign out button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.logout_rounded,
-                        color: Theme.of(context).colorScheme.error,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Sign Out',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-          ],
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
@@ -250,16 +308,17 @@ class ProfileScreen extends StatelessWidget {
             value,
             style: const TextStyle(
               color: AppColors.primary,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           Text(
             label,
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -276,25 +335,29 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 2),
       leading: Container(
-        width: 36,
-        height: 36,
+        width: 38,
+        height: 38,
         decoration: BoxDecoration(
-          color: AppColors.primarySurface,
+          color: const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: AppColors.primary, size: 20),
+        child: Icon(icon, color: const Color(0xFF1E293B), size: 19),
       ),
       title: Text(
         label,
         style: const TextStyle(
-          color: AppColors.textPrimary,
+          color: Color(0xFF1E293B),
           fontSize: 14,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
         ),
       ),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      trailing: const Icon(
+        Icons.chevron_right_rounded,
+        color: Color(0xFF94A3B8),
+        size: 20,
+      ),
     );
   }
 

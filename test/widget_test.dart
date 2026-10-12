@@ -20,7 +20,10 @@ void main() {
     await tester.tap(find.text('Sign In'));
     await tester.pumpAndSettle();
 
-    // Verify Home screen loaded
-    expect(find.text('Popular Listings'), findsOneWidget);
+    // Verify Home screen and navigation dock loaded
+    expect(find.text('CampusKart'), findsAtLeast(1));
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Chats'), findsOneWidget);
+    expect(find.text('Sell'), findsOneWidget);
   });
 }

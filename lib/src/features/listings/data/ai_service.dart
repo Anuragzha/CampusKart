@@ -29,11 +29,11 @@ class AiListingEnhancement {
 class AiService {
   /// Paste your live deployed Render URL here (e.g. 'https://campuskart-ai.onrender.com')
   /// When null/empty, automatically falls back to local server (localhost / 10.0.2.2).
-  static const String? liveBackendUrl = 'https://campuskart-yf8h.onrender.com';
+  static const String liveBackendUrl = 'https://campuskart-yf8h.onrender.com';
 
   static String get baseUrl {
-    if (liveBackendUrl != null && liveBackendUrl!.trim().isNotEmpty) {
-      return liveBackendUrl!.trim();
+    if (liveBackendUrl.trim().isNotEmpty) {
+      return liveBackendUrl.trim();
     }
     if (kIsWeb) return 'http://localhost:8000';
     if (defaultTargetPlatform == TargetPlatform.android) {

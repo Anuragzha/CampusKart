@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:campus_kart/src/core/constants/app_colors.dart';
 
 class CategoryFilterBar extends StatefulWidget {
   final ValueChanged<String?>? onCategorySelected;
@@ -19,8 +20,8 @@ class _CategoryFilterBarState extends State<CategoryFilterBar> {
 
   static const List<Map<String, dynamic>> _filters = [
     {'label': 'All', 'icon': Icons.grid_view_rounded},
-    {'label': 'Books', 'icon': Icons.menu_book_rounded},
     {'label': 'Electronics', 'icon': Icons.devices_rounded},
+    {'label': 'Books', 'icon': Icons.menu_book_rounded},
     {'label': 'Clothes', 'icon': Icons.checkroom_rounded},
     {'label': 'Hostel Items', 'icon': Icons.hotel_rounded},
     {'label': 'Furniture', 'icon': Icons.chair_rounded},
@@ -42,7 +43,7 @@ class _CategoryFilterBarState extends State<CategoryFilterBar> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: _filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final filter = _filters[index];
           final label = filter['label'] as String;
@@ -52,21 +53,17 @@ class _CategoryFilterBarState extends State<CategoryFilterBar> {
           return GestureDetector(
             onTap: () {
               setState(() => _selected = label);
-              widget.onCategorySelected
-                  ?.call(label == 'All' ? null : label);
+              widget.onCategorySelected?.call(label == 'All' ? null : label);
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF5C35EA)
-                    : Colors.white,
+                color: isSelected ? AppColors.primary : Colors.white,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFF5C35EA)
+                      ? AppColors.primary
                       : const Color(0xFFE5E7EB),
                 ),
               ),
@@ -76,16 +73,14 @@ class _CategoryFilterBarState extends State<CategoryFilterBar> {
                   Icon(
                     icon,
                     size: 15,
-                    color: isSelected
-                        ? Colors.white
-                        : const Color(0xFF6B7280),
+                    color: isSelected ? Colors.white : const Color(0xFF6B7280),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     label,
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       color: isSelected
                           ? Colors.white
                           : const Color(0xFF6B7280),

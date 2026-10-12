@@ -4,9 +4,11 @@ import 'package:campus_kart/src/features/listings/data/listing_repository.dart';
 
 // ── Repository provider ───────────────────────────────────────────────────
 
-/// Provides the [ListingRepository] singleton (Firestore-backed).
+final _sharedMockRepo = MockListingRepository();
+
+/// Provides the active [ListingRepository] implementation.
 final listingRepositoryProvider = Provider<ListingRepository>((ref) {
-  return FirestoreListingRepository();
+  return _sharedMockRepo;
 });
 
 // ── State providers ───────────────────────────────────────────────────────
@@ -19,8 +21,7 @@ final searchQueryProvider = StateProvider<String>((ref) => '');
 
 // ── Stream providers ──────────────────────────────────────────────────────
 
-/// Streams all active listings from Firestore, filtered by selected category.
-/// Auto-disposed when no longer watched.
+/// Streams all active listings filtered by selected category.
 final listingsStreamProvider = StreamProvider.autoDispose<List<ListingModel>>((
   ref,
 ) {
@@ -39,7 +40,6 @@ final sellerListingsStreamProvider = StreamProvider.autoDispose
 // ── Derived / computed providers ──────────────────────────────────────────
 
 /// Filters [listingsStreamProvider] by the current [searchQueryProvider].
-/// Returns an empty list while data is loading.
 final visibleListingsProvider = Provider.autoDispose<List<ListingModel>>((ref) {
   final listingsAsync = ref.watch(listingsStreamProvider);
   final query = ref.watch(searchQueryProvider).toLowerCase().trim();
@@ -50,10 +50,11 @@ final visibleListingsProvider = Provider.autoDispose<List<ListingModel>>((ref) {
       return listings.where((l) {
         return l.title.toLowerCase().contains(query) ||
             l.description.toLowerCase().contains(query) ||
-            l.category.toLowerCase().contains(query);
+            l.category.toLowerCase().contains(query) ||
+            (l.specs.values.any((val) => val.toLowerCase().contains(query)));
       }).toList();
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (e, st) => [],
   );
 });

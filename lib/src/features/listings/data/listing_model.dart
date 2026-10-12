@@ -15,7 +15,7 @@ enum ListingCondition {
       case ListingCondition.likeNew:
         return 'Like New';
       case ListingCondition.good:
-        return 'Good';
+        return 'Used';
       case ListingCondition.fair:
         return 'Fair';
     }
@@ -23,7 +23,7 @@ enum ListingCondition {
 
   static ListingCondition fromString(String value) {
     return ListingCondition.values.firstWhere(
-      (e) => e.name == value,
+      (e) => e.name == value || e.label.toLowerCase() == value.toLowerCase(),
       orElse: () => ListingCondition.good,
     );
   }
@@ -43,7 +43,7 @@ enum ListingStatus {
 
 // ── Model ─────────────────────────────────────────────────────────────────
 
-/// Represents a single marketplace listing stored in Firestore.
+/// Represents a marketplace listing.
 class ListingModel {
   const ListingModel({
     required this.id,
@@ -57,6 +57,11 @@ class ListingModel {
     required this.status,
     required this.location,
     required this.createdAt,
+    this.isFeatured = false,
+    this.isNegotiable = true,
+    this.sellerName = 'Student Seller',
+    this.sellerHandle = '@campus_user',
+    this.specs = const {},
   });
 
   final String id;
@@ -70,6 +75,11 @@ class ListingModel {
   final ListingStatus status;
   final String location;
   final DateTime createdAt;
+  final bool isFeatured;
+  final bool isNegotiable;
+  final String sellerName;
+  final String sellerHandle;
+  final Map<String, String> specs;
 
   // ── Firestore deserialization ─────────────────────────────────────────────
 
@@ -87,7 +97,16 @@ class ListingModel {
       photoUrls: List<String>.from(map['photoUrls'] as List? ?? []),
       status: ListingStatus.fromString(map['status'] as String? ?? 'active'),
       location: map['location'] as String? ?? '',
-      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: map['createdAt'] is Timestamp
+          ? (map['createdAt'] as Timestamp).toDate()
+          : (map['createdAt'] is DateTime
+                ? map['createdAt'] as DateTime
+                : DateTime.now()),
+      isFeatured: map['isFeatured'] as bool? ?? false,
+      isNegotiable: map['isNegotiable'] as bool? ?? true,
+      sellerName: map['sellerName'] as String? ?? 'Student Seller',
+      sellerHandle: map['sellerHandle'] as String? ?? '@campus_user',
+      specs: Map<String, String>.from(map['specs'] as Map? ?? {}),
     );
   }
 
@@ -109,6 +128,11 @@ class ListingModel {
       'status': status.name,
       'location': location,
       'createdAt': Timestamp.fromDate(createdAt),
+      'isFeatured': isFeatured,
+      'isNegotiable': isNegotiable,
+      'sellerName': sellerName,
+      'sellerHandle': sellerHandle,
+      'specs': specs,
     };
   }
 
@@ -126,6 +150,11 @@ class ListingModel {
     ListingStatus? status,
     String? location,
     DateTime? createdAt,
+    bool? isFeatured,
+    bool? isNegotiable,
+    String? sellerName,
+    String? sellerHandle,
+    Map<String, String>? specs,
   }) {
     return ListingModel(
       id: id ?? this.id,
@@ -139,6 +168,11 @@ class ListingModel {
       status: status ?? this.status,
       location: location ?? this.location,
       createdAt: createdAt ?? this.createdAt,
+      isFeatured: isFeatured ?? this.isFeatured,
+      isNegotiable: isNegotiable ?? this.isNegotiable,
+      sellerName: sellerName ?? this.sellerName,
+      sellerHandle: sellerHandle ?? this.sellerHandle,
+      specs: specs ?? this.specs,
     );
   }
 

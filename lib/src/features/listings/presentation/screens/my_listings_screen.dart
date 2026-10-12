@@ -1,135 +1,344 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:campus_kart/src/core/constants/app_colors.dart';
+import 'package:campus_kart/src/core/utils/responsive.dart';
+import 'package:campus_kart/src/features/listings/data/listing_model.dart';
+import 'package:campus_kart/src/features/listings/presentation/providers/listing_providers.dart';
 
-class MyListingsScreen extends StatefulWidget {
+class MyListingsScreen extends ConsumerStatefulWidget {
   const MyListingsScreen({super.key});
 
   @override
-  State<MyListingsScreen> createState() => _MyListingsScreenState();
+  ConsumerState<MyListingsScreen> createState() => _MyListingsScreenState();
 }
 
-class _MyListingsScreenState extends State<MyListingsScreen> {
+class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
   bool _showActive = true;
-
-  static final List<Map<String, dynamic>> _activeListings = [
-    {
-      'title': 'MacBook Air M1',
-      'price': '₹48,000',
-      'time': '2 days ago',
-      'image':
-          'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=200&q=80',
-      'status': 'Active',
-    },
-    {
-      'title': 'Engineering Physics Book',
-      'price': '₹250',
-      'time': '5 hours ago',
-      'image':
-          'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&q=80',
-      'status': 'Active',
-    },
-  ];
-
-  static final List<Map<String, dynamic>> _soldListings = [
-    {
-      'title': 'Denim Jacket (M size)',
-      'price': '₹800',
-      'time': '5 days ago',
-      'image':
-          'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80',
-      'status': 'Sold',
-    },
-    {
-      'title': 'Casio Scientific Calculator',
-      'price': '₹400',
-      'time': '10 days ago',
-      'image':
-          'https://images.unsplash.com/photo-1564466809058-bf4114d55352?w=200&q=80',
-      'status': 'Sold',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
-    final listings = _showActive ? _activeListings : _soldListings;
+    final listingsAsync = ref.watch(
+      sellerListingsStreamProvider('current-user'),
+    );
+    final repo = ref.read(listingRepositoryProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'My Listings',
+          'My Ads',
           style: TextStyle(
-            color: Color(0xFF1A1A2E),
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
+            color: Color(0xFF0F172A),
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined,
-                color: Color(0xFF1A1A2E)),
-            onPressed: () {},
+            icon: const Icon(
+              Icons.add_circle_outline_rounded,
+              color: AppColors.primary,
+            ),
+            onPressed: () => context.push('/create-listing'),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF5C35EA),
+        backgroundColor: AppColors.navy,
         foregroundColor: Colors.white,
         onPressed: () => context.push('/create-listing'),
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded),
         label: const Text(
-          'Add New Listing',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          'Post New Ad',
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
-      body: Column(
-        children: [
-          // ── Toggle Chips ──────────────────────────────────────────
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: Row(
+      body: ResponsiveContainer(
+        maxWidth: 820,
+        child: listingsAsync.when(
+          data: (allListings) {
+            final activeListings = allListings
+                .where((item) => item.status == ListingStatus.active)
+                .toList();
+            final soldListings = allListings
+                .where((item) => item.status == ListingStatus.sold)
+                .toList();
+
+            final currentList = _showActive ? activeListings : soldListings;
+
+            return Column(
               children: [
-                _ToggleChip(
-                  label: 'Active',
-                  selected: _showActive,
-                  count: _activeListings.length,
-                  onTap: () => setState(() => _showActive = true),
+                // ── Toggle Chips ──────────────────────────────────────
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  child: Row(
+                    children: [
+                      _ToggleChip(
+                        label: 'Active Ads',
+                        selected: _showActive,
+                        count: activeListings.length,
+                        onTap: () => setState(() => _showActive = true),
+                      ),
+                      const SizedBox(width: 12),
+                      _ToggleChip(
+                        label: 'Sold',
+                        selected: !_showActive,
+                        count: soldListings.length,
+                        onTap: () => setState(() => _showActive = false),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 12),
-                _ToggleChip(
-                  label: 'Sold',
-                  selected: !_showActive,
-                  count: _soldListings.length,
-                  onTap: () => setState(() => _showActive = false),
+
+                const Divider(height: 1, color: Color(0xFFE2E8F0)),
+
+                // ── Ads List ──────────────────────────────────────────
+                Expanded(
+                  child: currentList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _showActive
+                                    ? Icons.inventory_2_outlined
+                                    : Icons.check_circle_outline_rounded,
+                                size: 54,
+                                color: Colors.grey.shade300,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _showActive
+                                    ? 'You have no active ads yet'
+                                    : 'No items marked as sold yet',
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              if (_showActive)
+                                FilledButton.icon(
+                                  onPressed: () =>
+                                      context.push('/create-listing'),
+                                  icon: const Icon(Icons.add_rounded),
+                                  label: const Text('Post Your First Ad'),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: currentList.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final item = currentList[index];
+                            final isNew =
+                                item.condition == ListingCondition.newItem;
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: const Color(0xFFF1F5F9),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(14),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Thumbnail
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      item.photoUrls.isNotEmpty
+                                          ? item.photoUrls.first
+                                          : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200',
+                                      width: 84,
+                                      height: 84,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                width: 84,
+                                                height: 84,
+                                                color: const Color(0xFFF1F5F9),
+                                                child: const Icon(
+                                                  Icons.image_outlined,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                ),
+                                              ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+
+                                  // Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.title,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: Color(0xFF0F172A),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '\$${item.price.toStringAsFixed(item.price % 1 == 0 ? 0 : 2)}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 15,
+                                                color: AppColors.primary,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: isNew
+                                                    ? AppColors.newBadgeBg
+                                                    : AppColors.usedBadgeBg,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Text(
+                                                isNew ? 'New' : 'Used',
+                                                style: TextStyle(
+                                                  color: isNew
+                                                      ? AppColors.newBadgeText
+                                                      : AppColors.usedBadgeText,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+
+                                        // Quick action buttons
+                                        Row(
+                                          children: [
+                                            if (_showActive)
+                                              InkWell(
+                                                onTap: () async {
+                                                  await repo.markAsSold(
+                                                    item.id,
+                                                  );
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Marked as Sold!',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .successSurface,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: const Text(
+                                                    'Mark as Sold',
+                                                    style: TextStyle(
+                                                      color: Color(0xFF15803D),
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            const SizedBox(width: 10),
+                                            InkWell(
+                                              onTap: () async {
+                                                await repo.deleteListing(
+                                                  item.id,
+                                                );
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Ad deleted',
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(4),
+                                                child: Icon(
+                                                  Icons.delete_outline_rounded,
+                                                  size: 18,
+                                                  color: Color(0xFFEF4444),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
-            ),
-          ),
-
-          // ── Listing Cards ─────────────────────────────────────────
-          Expanded(
-            child: listings.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No listings here.',
-                      style: TextStyle(color: Color(0xFF6B7280)),
-                    ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: listings.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final item = listings[index];
-                      return _MyListingCard(item: item);
-                    },
-                  ),
-          ),
-        ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, _) => Center(child: Text('Error: $err')),
+        ),
       ),
     );
   }
@@ -153,113 +362,38 @@ class _ToggleChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF5C35EA) : Colors.white,
+          color: selected ? AppColors.primary : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? const Color(0xFF5C35EA) : const Color(0xFFE5E7EB),
-          ),
         ),
-        child: Text(
-          '$label ($count)',
-          style: TextStyle(
-            color: selected ? Colors.white : const Color(0xFF6B7280),
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MyListingCard extends StatelessWidget {
-  final Map<String, dynamic> item;
-  const _MyListingCard({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    final isSold = item['status'] == 'Sold';
-
-    return Card(
-      elevation: 0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Thumbnail
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                item['image'] as String,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 80,
-                  height: 80,
-                  color: const Color(0xFFF1F3F7),
-                  child: const Icon(Icons.image_outlined,
-                      color: Color(0xFF6B7280)),
-                ),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.white : const Color(0xFF64748B),
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                fontSize: 13,
               ),
             ),
-            const SizedBox(width: 14),
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item['title'] as String,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Color(0xFF1A1A2E),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item['price'] as String,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      color: Color(0xFF5C35EA),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item['time'] as String,
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF6B7280)),
-                  ),
-                ],
-              ),
-            ),
-            // Status badge
+            const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
               decoration: BoxDecoration(
-                color: isSold
-                    ? const Color(0xFF6B7280).withOpacity(0.12)
-                    : const Color(0xFF22C55E).withOpacity(0.12),
-                borderRadius: BorderRadius.circular(20),
+                color: selected
+                    ? Colors.white.withValues(alpha: 0.25)
+                    : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                item['status'] as String,
+                '$count',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: isSold
-                      ? const Color(0xFF6B7280)
-                      : const Color(0xFF22C55E),
+                  color: selected ? Colors.white : const Color(0xFF334155),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

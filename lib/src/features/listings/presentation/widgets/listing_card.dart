@@ -1,135 +1,202 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:campus_kart/src/core/constants/app_colors.dart';
+import 'package:campus_kart/src/features/listings/data/listing_model.dart';
 
 class ListingCard extends StatefulWidget {
-  final String title;
-  final String price;
-  final String location;
-  final String time;
-  final String imageUrl;
-  final bool initiallyLiked;
+  final ListingModel listing;
 
-  const ListingCard({
-    super.key,
-    required this.title,
-    required this.price,
-    required this.location,
-    required this.time,
-    required this.imageUrl,
-    this.initiallyLiked = false,
-  });
+  const ListingCard({super.key, required this.listing});
 
   @override
   State<ListingCard> createState() => _ListingCardState();
 }
 
 class _ListingCardState extends State<ListingCard> {
-  late bool _liked;
-
-  @override
-  void initState() {
-    super.initState();
-    _liked = widget.initiallyLiked;
-  }
+  bool _liked = false;
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.listing;
+    final isNew = item.condition == ListingCondition.newItem;
+    final formattedPrice = item.price >= 1000
+        ? '\$${item.price.toStringAsFixed(0)}'
+        : '\$${item.price.toStringAsFixed(item.price % 1 == 0 ? 0 : 2)}';
+
     return GestureDetector(
-      onTap: () => context.push('/listing-detail'),
+      onTap: () => context.push('/listing/${item.id}'),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1F5F9), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Row(
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                widget.imageUrl,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 80,
-                  height: 80,
-                  color: const Color(0xFFF1F3F7),
-                  child: const Icon(Icons.image_outlined,
-                      color: Color(0xFF6B7280)),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Details
+            // ── Image Container with badges ─────────────────────────
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              flex: 12,
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Color(0xFF1A1A2E),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.price,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      color: Color(0xFF5C35EA),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on_outlined,
-                          size: 12, color: Color(0xFF6B7280)),
-                      const SizedBox(width: 2),
-                      Expanded(
-                        child: Text(
-                          widget.location,
-                          style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF6B7280)),
-                          overflow: TextOverflow.ellipsis,
+                  Container(
+                    color: const Color(0xFFF8FAFC),
+                    child: Image.network(
+                      item.photoUrls.isNotEmpty
+                          ? item.photoUrls.first
+                          : 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: const Color(0xFFF1F5F9),
+                        child: const Icon(
+                          Icons.image_outlined,
+                          color: AppColors.textSecondary,
+                          size: 36,
                         ),
                       ),
-                      const Text(
-                        ' · ',
-                        style:
-                            TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
+                    ),
+                  ),
+
+                  // "Featured" badge top-left
+                  if (item.isFeatured)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B),
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(
+                                0xFFF59E0B,
+                              ).withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Text(
+                          'Featured',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
                       ),
-                      Text(
-                        widget.time,
-                        style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF6B7280)),
+                    ),
+
+                  // Favorite heart button top-right
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Material(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () => setState(() => _liked = !_liked),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            _liked
+                                ? Icons.favorite
+                                : Icons.favorite_border_rounded,
+                            size: 18,
+                            color: _liked
+                                ? const Color(0xFFEF4444)
+                                : const Color(0xFF64748B),
+                          ),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-            // Heart
-            GestureDetector(
-              onTap: () => setState(() => _liked = !_liked),
-              child: Icon(
-                _liked ? Icons.favorite : Icons.favorite_border,
-                color: _liked ? Colors.red : const Color(0xFF6B7280),
-                size: 22,
+
+            // ── Item Information ─────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title
+                  Text(
+                    item.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF1E293B),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      height: 1.25,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Price & Condition Badge Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Price
+                      Flexible(
+                        child: Text(
+                          formattedPrice,
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      // Condition pill (Used / New)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isNew
+                              ? AppColors.newBadgeBg
+                              : AppColors.usedBadgeBg,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          isNew ? 'New' : 'Used',
+                          style: TextStyle(
+                            color: isNew
+                                ? AppColors.newBadgeText
+                                : AppColors.usedBadgeText,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
