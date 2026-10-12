@@ -73,6 +73,7 @@ async def complete_json(system_prompt: str, user_prompt: str) -> dict[str, Any]:
 
 
 @app.get("/health")
+@app.get("/healthz")
 async def health() -> dict[str, Any]:
     has_key = bool(get_groq_api_key())
     return {
