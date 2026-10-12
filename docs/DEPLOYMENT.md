@@ -65,11 +65,11 @@ Fill in these exact values:
 
 Scroll down to the **Environment Variables** section and add:
 
-| Key            | Value                                                      |
-| -------------- | ---------------------------------------------------------- |
+| Key            | Value                                              |
+| -------------- | -------------------------------------------------- |
 | `GROQ_API_KEY` | `<your_groq_api_key>` (Paste your secret key here) |
-| `GROQ_MODEL`   | `qwen/qwen3.8-27b`                                  |
-| `CORS_ORIGINS` | `*`                                                 |
+| `GROQ_MODEL`   | `qwen/qwen3.8-27b`                                 |
+| `CORS_ORIGINS` | `*`                                                |
 
 Click **Create Web Service**.
 
