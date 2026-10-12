@@ -30,7 +30,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'My Ads',
+          'My List',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontWeight: FontWeight.w800,
@@ -53,7 +53,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
         onPressed: () => context.push('/create-listing'),
         icon: const Icon(Icons.add_rounded),
         label: const Text(
-          'Post New Ad',
+          'Post New Listing',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
@@ -79,7 +79,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
                   child: Row(
                     children: [
                       _ToggleChip(
-                        label: 'Active Ads',
+                        label: 'Active Listings',
                         selected: _showActive,
                         count: activeListings.length,
                         onTap: () => setState(() => _showActive = true),
@@ -97,7 +97,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
 
                 const Divider(height: 1, color: Color(0xFFE2E8F0)),
 
-                // ── Ads List ──────────────────────────────────────────
+                // ── Listings List ─────────────────────────────────────
                 Expanded(
                   child: currentList.isEmpty
                       ? Center(
@@ -114,7 +114,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
                               const SizedBox(height: 12),
                               Text(
                                 _showActive
-                                    ? 'You have no active ads yet'
+                                    ? 'You have no active listings yet'
                                     : 'No items marked as sold yet',
                                 style: const TextStyle(
                                   color: AppColors.textSecondary,
@@ -128,7 +128,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
                                   onPressed: () =>
                                       context.push('/create-listing'),
                                   icon: const Icon(Icons.add_rounded),
-                                  label: const Text('Post Your First Ad'),
+                                  label: const Text('Post Your First Listing'),
                                   style: FilledButton.styleFrom(
                                     backgroundColor: AppColors.primary,
                                   ),
@@ -307,7 +307,7 @@ class _MyListingsScreenState extends ConsumerState<MyListingsScreen> {
                                                   ).showSnackBar(
                                                     const SnackBar(
                                                       content: Text(
-                                                        'Ad deleted',
+                                                        'Listing deleted',
                                                       ),
                                                     ),
                                                   );

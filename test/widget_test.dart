@@ -25,5 +25,7 @@ void main() {
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Chats'), findsOneWidget);
     expect(find.text('Sell'), findsOneWidget);
+    expect(find.text('My List'), findsOneWidget);
+    expect(find.text('Account'), findsOneWidget);
   });
 }

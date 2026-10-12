@@ -145,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
                     IntrinsicHeight(
                       child: Row(
                         children: [
-                          _buildStatItem('8', 'Active Ads'),
+                          _buildStatItem('8', 'Listings'),
                           VerticalDivider(
                             color: Colors.grey.shade200,
                             width: 1,
@@ -180,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.bookmark_outline_rounded,
-                      label: 'My Ads & Listings',
+                      label: 'My List',
                       onTap: () => context.go('/my-listings'),
                     ),
                     _buildDivider(),

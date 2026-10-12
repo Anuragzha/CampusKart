@@ -136,8 +136,9 @@ class _ListingDetailScreenState extends ConsumerState<ListingDetailScreen> {
                             ),
                           ],
                           onChanged: (val) {
-                            if (val != null)
+                            if (val != null) {
                               setModalState(() => selectedLocation = val);
+                            }
                           },
                         ),
                       ),
@@ -180,8 +181,9 @@ class _ListingDetailScreenState extends ConsumerState<ListingDetailScreen> {
                             ),
                           ],
                           onChanged: (val) {
-                            if (val != null)
+                            if (val != null) {
                               setModalState(() => selectedPayment = val);
+                            }
                           },
                         ),
                       ),

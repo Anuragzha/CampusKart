@@ -17,9 +17,13 @@ class MainShell extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: isDesktop ? _DesktopTopNavBar(navigationShell: navigationShell) : null,
+      appBar: isDesktop
+          ? _DesktopTopNavBar(navigationShell: navigationShell)
+          : null,
       body: navigationShell,
-      bottomNavigationBar: isDesktop ? null : _MobileBottomNavBar(navigationShell: navigationShell),
+      bottomNavigationBar: isDesktop
+          ? null
+          : _MobileBottomNavBar(navigationShell: navigationShell),
     );
   }
 }
@@ -121,11 +125,11 @@ class _MobileBottomNavBar extends StatelessWidget {
                 ),
               ),
 
-              // 4. My Ads
+              // 4. My List
               _MobileNavItem(
                 icon: Icons.bookmark_outline_rounded,
                 selectedIcon: Icons.bookmark_rounded,
-                label: 'My Ads',
+                label: 'My List',
                 selected: currentIndex == 2,
                 onTap: () => _onTap(2),
               ),
@@ -287,7 +291,7 @@ class _DesktopTopNavBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 4),
                 _DesktopNavLink(
-                  label: 'My Ads',
+                  label: 'My List',
                   icon: Icons.bookmark_outline_rounded,
                   selected: currentIndex == 2,
                   onTap: () => _onTap(2),
@@ -305,14 +309,24 @@ class _DesktopTopNavBar extends StatelessWidget implements PreferredSizeWidget {
                 // ── Dark Navy Center Sell Button on Desktop ───────────
                 FilledButton.icon(
                   onPressed: () => context.push('/create-listing'),
-                  icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                  icon: const Icon(
+                    Icons.add_rounded,
+                    size: 18,
+                    color: Colors.white,
+                  ),
                   label: const Text(
                     'Sell',
-                    style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.navy,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

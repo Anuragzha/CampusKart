@@ -140,9 +140,11 @@ backend/
 | `/home`           | Marketplace Feed   | ✅ Yes        |
 | `/listing/:id`    | Listing Detail     | ✅ Yes        |
 | `/create-listing` | Create Listing     | ✅ Yes        |
+| `/categories`     | Categories Grid    | ✅ Yes        |
+| `/my-listings`    | My List Screen     | ✅ Yes        |
 | `/inbox`          | Chat Inbox         | ✅ Yes        |
 | `/chat/:chatId`   | Chat Screen        | ✅ Yes        |
-| `/profile/:uid`   | User Profile       | ✅ Yes        |
+| `/profile`        | User Profile       | ✅ Yes        |
 
 ---
 

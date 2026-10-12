@@ -77,22 +77,22 @@ Click **Create Web Service**.
 
 ## Step 5: Test Live API
 
-Render will build and deploy the container in ~2 minutes. You will get a live URL like:
-`https://campuskart-ai.onrender.com`
+Render will build and deploy the container in ~2 minutes. You will get a live URL:
+`https://campuskart-yf8h.onrender.com`
 
 Test it in your browser:
 
-- `https://campuskart-ai.onrender.com/health` → returns `{"status":"ok","service":"campuskart-ai"}`
-- `https://campuskart-ai.onrender.com/docs` → interactive Swagger API testing UI
+- `https://campuskart-yf8h.onrender.com/health` → returns `{"status":"ok","service":"campuskart-ai"}`
+- `https://campuskart-yf8h.onrender.com/docs` → interactive Swagger API testing UI
 
 ---
 
-## Step 6: Connect Live URL in Flutter
+## Step 6: Connected in Flutter
 
 In [`lib/src/features/listings/data/ai_service.dart`](file:///c:/Users/acer/Desktop/CampusCart/lib/src/features/listings/data/ai_service.dart):
 
 ```dart
-static const String liveBackendUrl = 'https://campuskart-ai.onrender.com';
+static const String liveBackendUrl = 'https://campuskart-yf8h.onrender.com';
 ```
 
-Now any student testing the APK on campus will hit the live cloud AI! 🚀
+Now any student testing the app on web or Android will hit the live cloud AI directly! 🚀

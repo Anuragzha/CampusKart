@@ -101,10 +101,12 @@ class _InboxScreenState extends State<InboxScreen> {
   @override
   Widget build(BuildContext context) {
     final filteredThreads = _mockThreads.where((thread) {
-      if (_selectedTab == 'Buying' && thread.role != _ChatRole.buying)
+      if (_selectedTab == 'Buying' && thread.role != _ChatRole.buying) {
         return false;
-      if (_selectedTab == 'Selling' && thread.role != _ChatRole.selling)
+      }
+      if (_selectedTab == 'Selling' && thread.role != _ChatRole.selling) {
         return false;
+      }
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
         return thread.name.toLowerCase().contains(query) ||

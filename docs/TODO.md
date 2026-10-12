@@ -31,17 +31,17 @@
 
 ### 🎨 Design & UI Mockup Implementation (All 9 Screens) ✅ COMPLETED
 
-- [x] **Screen 1: Welcome / Login Screen** (`login_screen.dart`) — CampusKart branding, campus graphic, Google Sign-in, email login
-- [x] **Screen 2: Home Dashboard** (`home_screen.dart`) — Search bar, purple promo banner, quick category icons, popular listings
-- [x] **Screen 3: All Listings Grid** (`home_screen.dart` / `listing_card.dart`) — 2-column cards, price, location, condition
-- [x] **Screen 4: Product Detail** (`listing_detail_screen.dart`) — Hero image carousel, price & negotiable badge, seller info, sticky Chat & Buy actions
-- [x] **Screen 5: Direct Messaging & Chat** (`chat_screen.dart`) — Realtime bubble layout, attachments bar, quick chips
-- [x] **Screen 6: Post Listing** (`create_listing_screen.dart`) — Photo upload picker, title, category dropdown, price, negotiable switch
-- [x] **Screen 7: Categories Grid** (`categories_screen.dart`) — 8 styled category cards with custom icons & tints
-- [x] **Screen 8: My Listings** (`my_listings_screen.dart`) — Active vs Sold toggle tabs, listing cards, + Add button
-- [x] **Screen 9: User Profile** (`profile_screen.dart`) — Verified Student badge, stats row (12 Listings, 5 Sold, 3 Reviews), options list
-- [x] **Bottom Navigation Shell** (`main_shell.dart`) — Home, Chats, Center elevated (+), My List, Profile
-- [x] **Declarative Router with StatefulShellRoute** (`app_router.dart`) — Tab persistence & deep linking
+- [x] **Screen 1: Welcome / Login Screen** (`login_screen.dart`) — CampusKart branding, campus graphic, Google Sign-in, instant bypass login
+- [x] **Screen 2: Home Dashboard** (`home_screen.dart`) — Search bar with live filtering, promo banner, category chips, responsive grid (2-5 cols)
+- [x] **Screen 3: All Listings Grid** (`listing_card.dart`) — Grid cards with Featured, Used/New condition badges, live state updates
+- [x] **Screen 4: Product Detail** (`listing_detail_screen.dart`) — Image gallery with dots, Description & Details accordions, Chat & Buy Now Deal modal
+- [x] **Screen 5: Direct Messaging & Chat** (`chat_screen.dart`) — Realtime bubble layout, text input, Groq AI smart reply chips
+- [x] **Screen 6: Post Listing** (`create_listing_screen.dart`) — Live Groq AI auto-enhancer, photo upload, category/condition picker, instant feed sync
+- [x] **Screen 7: Categories Grid** (`categories_screen.dart`) — 8 styled category cards with dynamic category filtering
+- [x] **Screen 8: My List Screen** (`my_listings_screen.dart`) — Active vs Sold tabs, Mark as Sold, Delete listing, Add listing button
+- [x] **Screen 9: User Profile** (`profile_screen.dart`) — Verified Student badge, stats row, safety tips dialog, working Sign Out
+- [x] **Responsive Navigation Dock** (`main_shell.dart`) — Mobile elevated Dark Navy circular `+` (Sell) button, Desktop TopBar (≥900px), 5 tabs (`Home`, `Chats`, `Sell`, `My List`, `Account`)
+- [x] **Declarative Router with StatefulShellRoute** (`app_router.dart`) — Tab persistence, deep linking & zero overflow layout
 
 ### 🔐 Authentication Backend Setup
 
