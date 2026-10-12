@@ -93,7 +93,7 @@
 - [x] Test `/api/v1/ai/generate-description` with Groq (1.35s response) ✅
 - [x] Test `/api/v1/ai/smart-replies` with Groq (0.67s response) ✅
 - [ ] Add keyword sanitization for inappropriate listings
-- [ ] Deploy FastAPI to Render or Railway
+- [x] Deploy FastAPI to Render: `https://campuskart-yf8h.onrender.com` ✅
 
 ### AI in Flutter (Listing Enhancer)
 
