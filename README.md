@@ -32,17 +32,6 @@ CampusKart is a high-performance, cross-platform campus marketplace application 
 
 ---
 
-## 🚀 Live Backend & Endpoints
-
-The AI microservice is deployed and operating live:
-
-- **Live Base URL:** `https://campuskart-yf8h.onrender.com`
-- **Health Check:** `GET https://campuskart-yf8h.onrender.com/health` (Returns `{"status": "ok", "service": "campuskart-ai"}`)
-- **Listing Auto-Enhancer:** `POST /api/v1/ai/generate-description`
-- **Deal Negotiation Smart Replies:** `POST /api/v1/ai/smart-replies`
-
----
-
 ## 📂 Repository Layout (Clean Architecture)
 
 ```text
